@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "At-Pet 桌宠接入",
+    "description": "把 Harness 的回合、工具调用同步到 At-Pet 桌宠，并把权限询问与提问转发到桌宠窗口。"
+  }
+}

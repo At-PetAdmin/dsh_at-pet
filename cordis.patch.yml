@@ -1,0 +1,23 @@
+# At-Pet desktop-pet bridge for DeepSeek Harness.
+#
+# The row below is the only insertion: the Host plugin owns every registration
+# it needs. `config` is optional; the defaults documented in README.md apply to
+# any key you leave out.
+- insert:
+    - id: dsh-atpet
+      name: '@local/dsh-atpet'
+      config:
+        # Local HTTP API of the running At-Pet app (127.0.0.1:8765 by default).
+        baseUrl: http://127.0.0.1:8765
+        # Agent identity reported to At-Pet; it normalizes to the "deepseekharness"
+        # registry key, so the pet shows the DeepSeek Harness icon and name.
+        agentApp: deepseek-harness
+        # Mirror turn/tool activity onto the pet.
+        reportEvents: true
+        # Give delegated (subagent) sessions their own pet window.
+        reportSubagents: true
+        # Forward approval prompts to the pet window; unanswered or unreachable
+        # requests fall back to the Harness approval UI.
+        bridgeApprovals: true
+        # Forward single-select ask_user_question prompts to the pet bubble.
+        bridgeQuestions: true
