@@ -1,5 +1,7 @@
 # At-Pet 桌宠接入（DeepSeek Harness 插件）
 
+[![npm](https://img.shields.io/npm/v/dsh-atpet.svg)](https://www.npmjs.com/package/dsh-atpet)
+
 把 [At-Pet](https://github.com/At-PetAdmin/At-Pet) 桌宠接到 DeepSeek Harness 上：桌宠跟着回合思考、挖土、庆祝，权限询问和 `ask_user_question` 直接弹到桌宠窗口，在桌宠上点完就回到 Harness。
 
 与上游 `integrations/agent-plugins/deepseek-harness/` 的 hook 方案相比，本插件是**进程内**实现：
@@ -15,16 +17,49 @@
 ## 前提
 
 - Windows 10/11，At-Pet 已启动（默认监听 `127.0.0.1:8765`）。
-- DeepSeek Harness（`dsh`）0.2.x。插件只用 Host 侧公开的 Cordis 事件，无第三方依赖。
+- DeepSeek Harness（`dsh`）0.2.x（包内 `engines.dsh` 声明 `>=0.2.0 <0.3.0-0`）。插件只用 Host 侧公开的 Cordis 事件，无第三方依赖，也没有安装期构建脚本。
 
 ## 安装
 
+已发布到 npm：**`dsh-atpet`**（<https://www.npmjs.com/package/dsh-atpet>）。
+
+### Harness 内（推荐）
+
 ```js
-// 通过 plugin_manager 安装当前目录即可，无需手工改 profile
-plugin_manager({ action: 'install_bundle', target: '<本仓库克隆路径>' })
+// Agent 工具 / 会话里安装最新版
+plugin_manager({ action: 'install_bundle', target: 'dsh-atpet' })
 ```
 
-安装后 Harness 会立刻通过 HMR 激活，无需重启。At-Pet 没开也不会报错：插件先探测 `/health`，不可达就静默跳过，权限与提问回退到 Harness 原生界面。
+也可以打开 Web 侧边栏的**插件**页，在安装框输入 `dsh-atpet`（或固定版本 `dsh-atpet@1.0.0`）。确认之前它会先从 registry 读出包名、版本、描述与图标。
+
+安装后 Harness 立刻通过 HMR 激活，无需重启。`desktop` profile 由桌面端持有，用上面两条（Agent 工具 / Web 插件页）即可，`dsh plugin` CLI 不适用于它。
+
+### 命令行 profile（web / headless / sdk 等）
+
+```bash
+dsh plugin --profile web add dsh-atpet
+```
+
+`dsh plugin` 会把参数转给 profile 目录里的 pnpm；安装成功后自动把 `dsh-atpet` 加进 `dsh.profile.bundles`。
+
+### 不经过 npm
+
+包尚未发布到 registry、或需要离线安装时，用下面两种方式：
+
+```js
+plugin_manager({ action: 'install_bundle', target: 'github:At-PetAdmin/dsh-atpet' })  // 直接从 GitHub 装
+plugin_manager({ action: 'install_bundle', target: '<本仓库克隆路径>' })              // 本地克隆目录（dev 链接）
+```
+
+从 `< 1.0.0` 的旧本地链接安装（包名 `@local/dsh-atpet`）迁移时，先卸掉旧的再装新的——两者是同一个 bundle 行，不能并存：
+
+```js
+plugin_manager({ action: 'remove_bundle', target: '@local/dsh-atpet' })
+```
+
+卸载：`plugin_manager({ action: 'remove_bundle', target: 'dsh-atpet' })`。
+
+At-Pet 没开也不会报错：插件先探测 `/health`，不可达就静默跳过，权限与提问回退到 Harness 原生界面。
 
 ## 行为
 
@@ -120,7 +155,7 @@ plugin_manager({ action: 'set_plugin', target: 'atpet-hooks-codex', enabled: fal
 
 ## 测试
 
-零依赖，直接跑：
+在仓库里零依赖，直接跑：
 
 ```bash
 node test/bridge.test.mjs

@@ -5,7 +5,7 @@
 # any key you leave out.
 - insert:
     - id: dsh-atpet
-      name: '@local/dsh-atpet'
+      name: 'dsh-atpet'
       config:
         # Local HTTP API of the running At-Pet app (127.0.0.1:8765 by default).
         baseUrl: http://127.0.0.1:8765

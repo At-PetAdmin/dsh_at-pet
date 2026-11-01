@@ -1,0 +1,45 @@
+name: publish
+
+# Publishes the bundle to npm as `dsh-atpet`.
+#
+# Trigger by pushing a version tag (`git tag v1.0.0 && git push origin v1.0.0`)
+# or manually from the Actions tab. The job runs the zero-dependency behaviour
+# tests first; a failing test never reaches the registry.
+#
+# Requires a repository secret NPM_TOKEN: an npm automation/granular token with
+# publish rights on the `dsh-atpet` package. The first publish creates the
+# package (publishConfig.access is already `public`).
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write # npm provenance
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Test
+        run: node test/bridge.test.mjs
+
+      - name: Check the packed tarball
+        run: npm pack --dry-run
+
+      - name: Publish
+        run: npm publish --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

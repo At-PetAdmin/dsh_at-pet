@@ -1,14 +1,15 @@
 {
-  "name": "@local/dsh-atpet",
+  "name": "dsh-atpet",
   "version": "1.0.0",
-  "private": true,
-  "description": "Bridges DeepSeek Harness activity, approvals, and questions to the At-Pet desktop pet",
+  "description": "Bridge DeepSeek Harness to the At-Pet desktop pet: mirror turns and tool calls onto the pet, and relay approvals and questions to the pet window",
   "type": "module",
   "main": "index.js",
+  "icon": "icon.svg",
   "exports": {
     ".": "./index.js",
     "./locale/*.json": "./locale/*.json",
-    "./icon": "./icon.svg"
+    "./icon": "./icon.svg",
+    "./package.json": "./package.json"
   },
   "files": [
     "index.js",
@@ -22,11 +23,28 @@
       "patch": "./cordis.patch.yml"
     }
   },
+  "engines": {
+    "node": ">=22",
+    "dsh": ">=0.2.0 <0.3.0-0"
+  },
   "keywords": [
     "dsh",
+    "dsh-plugin",
     "deepseek-harness",
     "at-pet",
     "desktop-pet"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/At-PetAdmin/dsh-atpet.git"
+  },
+  "homepage": "https://github.com/At-PetAdmin/dsh-atpet#readme",
+  "bugs": {
+    "url": "https://github.com/At-PetAdmin/dsh-atpet/issues"
+  },
+  "author": "Ni-ShuWu <shuwu41782459@outlook.com>",
+  "publishConfig": {
+    "access": "public"
+  },
   "license": "MIT"
 }

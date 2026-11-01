@@ -22,7 +22,7 @@
  * The plugin holds no durable state and writes no session events; unload removes
  * every listener and aborts in-flight polling.
  *
- * @module @local/dsh-atpet
+ * @module dsh-atpet
  */
 import { request as httpRequest } from 'node:http'
 import { request as httpsRequest } from 'node:https'
