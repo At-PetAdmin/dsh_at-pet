@@ -36,11 +36,11 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/At-PetAdmin/dsh-atpet.git"
+    "url": "git+https://github.com/At-PetAdmin/dsh_at-pet.git"
   },
-  "homepage": "https://github.com/At-PetAdmin/dsh-atpet#readme",
+  "homepage": "https://github.com/At-PetAdmin/dsh_at-pet#readme",
   "bugs": {
-    "url": "https://github.com/At-PetAdmin/dsh-atpet/issues"
+    "url": "https://github.com/At-PetAdmin/dsh_at-pet/issues"
   },
   "author": "Ni-ShuWu <shuwu41782459@outlook.com>",
   "publishConfig": {

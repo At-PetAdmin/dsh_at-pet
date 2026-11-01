@@ -47,7 +47,7 @@ dsh plugin --profile web add dsh-atpet
 包尚未发布到 registry、或需要离线安装时，用下面两种方式：
 
 ```js
-plugin_manager({ action: 'install_bundle', target: 'github:At-PetAdmin/dsh-atpet' })  // 直接从 GitHub 装
+plugin_manager({ action: 'install_bundle', target: 'github:At-PetAdmin/dsh_at-pet' })  // 直接从 GitHub 装
 plugin_manager({ action: 'install_bundle', target: '<本仓库克隆路径>' })              // 本地克隆目录（dev 链接）
 ```
 
