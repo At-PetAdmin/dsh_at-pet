@@ -1,14 +1,22 @@
 name: publish
 
-# Publishes the bundle to npm as `dsh-atpet`.
+# Stages the bundle on npm as `dsh-atpet`.
 #
-# Trigger by pushing a version tag (`git tag v1.0.0 && git push origin v1.0.0`)
+# Trigger by pushing a version tag (`git tag v1.1.0 && git push origin v1.1.0`)
 # or manually from the Actions tab. The job runs the zero-dependency behaviour
-# tests first; a failing test never reaches the registry.
+# tests first, then stages the packed tarball; a failing test never reaches the
+# registry.
 #
-# Requires a repository secret NPM_TOKEN: an npm automation/granular token with
-# publish rights on the `dsh-atpet` package. The first publish creates the
-# package (publishConfig.access is already `public`).
+# npm's current policy for accounts with 2FA: granular tokens that bypass 2FA
+# may only publish to the staging area, so this workflow deliberately does NOT
+# publish directly. After it succeeds, a maintainer approves the staged version
+# with a second factor:
+#
+#   npm stage list                   # find the stage id / version
+#   npm stage approve <stage-id>     # 2FA prompt, then the version goes live
+#
+# Requires a repository secret NPM_TOKEN: a granular access token with
+# "Read and write (stage only)" permission for `dsh-atpet`.
 
 on:
   push:
@@ -21,7 +29,7 @@ permissions:
   id-token: write # npm provenance
 
 jobs:
-  publish:
+  stage:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -30,7 +38,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: '24'
           registry-url: 'https://registry.npmjs.org'
 
       - name: Test
@@ -39,7 +47,21 @@ jobs:
       - name: Check the packed tarball
         run: npm pack --dry-run
 
-      - name: Publish
-        run: npm publish --provenance --access public
+      - name: Stage on npm
+        id: stage
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm stage publish --access public --provenance 2>&1 | tee "$RUNNER_TEMP/stage.log"
+          id="$(sed -n 's/.*staged with id \([0-9a-f-]*\).*/\1/p' "$RUNNER_TEMP/stage.log" | tail -1)"
+          echo "stage-id=$id" >> "$GITHUB_OUTPUT"
+          {
+            echo "### Staged dsh-atpet for review"
+            echo
+            echo "Approve with 2FA to publish:"
+            echo '```'
+            echo "npm stage approve $id"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
